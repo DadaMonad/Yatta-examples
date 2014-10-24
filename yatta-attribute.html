@@ -1,0 +1,29 @@
+
+
+<polymer-element name="yatta-attribute" hidden attributes="val name yatta type defaultVal">
+  <script>
+    Polymer("yatta-attribute", {
+      ready: function(){
+        if(this.type == null){
+          this.type = "immutable"
+        }
+      },
+      valChanged: function(oldValue, newValue){
+        if(this.yatta != null){
+          if(this.yatta.val(this.name) != newValue){
+              this.yatta.val(this.name, newValue, this.type)
+          }
+        }
+      },
+      yattaChanged: function(oldValue, yatta){
+        if(yatta.val(this.name) != this.val && this.val != null){
+          yatta.val(this.name, this.val, this.type);
+        } else if(this.defaultVal != null){
+          this.yatta.val(this.name, this.defaultVal, this.type);
+        }
+      }
+    });
+
+  </script>
+
+</polymer-element>

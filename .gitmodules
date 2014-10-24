@@ -1,0 +1,3 @@
+[submodule "Yatta"]
+	path = Yatta
+	url = https://github.com/DadaMonad/Yatta

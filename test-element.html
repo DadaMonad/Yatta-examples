@@ -1,0 +1,38 @@
+
+
+<link rel="import" href="./yatta-element.html">
+<link rel="import" href="./yatta-attribute.html">
+<link rel="import" href="./yatta-texteditor.html">
+<link rel="import" href="./bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="./bower_components/paper-input/paper-input.html">
+<polymer-element name="test-element" attributes="yatta">
+  <template>
+    <yatta-element id="yatta" yatta={{yatta}} user_id={{user_id}}>
+      <yatta-attribute name="x" val={{mystuff}}></yatta-attribute>
+      <yatta-attribute name="slider" val={{slider}}></yatta-attribute>
+      <yatta-attribute name="input" val={{input}} type="mutable" defaultVal="Text"></yatta-attribute>
+    </yatta-element>  
+    <p>{{mystuff}}</p>
+    <paper-slider min=10 max=2000 immediateValue={{slider}}></paper-slider>
+    <p>My PeerId: {{user_id}}</p>
+    <p>Slider value = {{slider}}</p>
+    <paper-input label="Foreign user id" on-change={{connectToPeer}}></paper-input>
+    <yatta-texteditor value={{input}}></yatta-texteditor>
+  </template>
+  <script>
+    Polymer({
+      ready: function(){
+        this.slider = 300;
+        this.user_id = ""+Math.floor(Math.random()*1000);
+      },
+      yattaChanged: function(){
+        window.yatta = this.yatta;
+      },
+      connectToPeer: function(){
+        this.$.yatta.connectToPeer(arguments[2].value);
+      }
+    });
+
+  </script>
+
+</polymer-element

@@ -1,0 +1,226 @@
+<link rel="import" href="bower_components/core-scaffold/core-scaffold.html">
+<link rel="import" href="bower_components/core-header-panel/core-header-panel.html">
+<link rel="import" href="bower_components/core-menu/core-menu.html">
+<link rel="import" href="bower_components/core-item/core-item.html">
+<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="bower_components/core-menu/core-submenu.html">
+<link rel="import" href="bower_components/core-pages/core-pages.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="bower_components/paper-item/paper-item.html">
+<link rel="import" href="bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="./yatta-element.html">
+<link rel="import" href="./yatta-attribute.html">
+<link rel="import" href="./yatta-texteditor.html">
+
+<polymer-element name="yatta-example">
+
+  <template>
+    <style>    
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      #core_scaffold {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+      #core_header_panel {
+        background-color: rgb(255, 255, 255);
+      }
+      #core_toolbar {
+        color: rgb(255, 255, 255);
+        background-color: rgb(79, 125, 201);
+      }
+      #core_menu {
+        font-size: 16px;
+      }
+      #core_pages {
+        width: 100%;
+        height: 100%;
+        border: 1px solid silver;
+        left: 0px;
+        top: 0px;
+        position: absolute;
+      }
+      #paper_input {
+        left: 373px;
+        top: 95px;
+        position: absolute;
+      }
+      #top_bar {
+        width: 100%;
+      }
+      .input_highlight {
+          background: #ccc;
+          padding: 2em;
+          margin: 2em;
+          font-size: 12px;
+          border-radius: 3px;
+      }
+    </style>
+    <core-scaffold id="core_scaffold">
+      <core-header-panel mode="seamed" id="core_header_panel" navigation flex>
+        <core-toolbar id="core_toolbar"></core-toolbar>
+        <core-menu selected="Configure" valueattr="label" selectedindex="0" id="core_menu" theme="core-light-theme">
+          <paper-item id="item_configure" icon="account-box" label="Connect" horizontal center layout active></paper-item>
+          <paper-item id="item_text_editing" icon="create" label="Text Editing" horizontal center layout></paper-item>
+          <paper-item id="item_elements" icon="extension" label="Collaborative Elements" horizontal center layout></paper-item>
+          <paper-item id="item_role_sdk1" iconSrc="http://c.fsdn.com/allura/p/role-project/icon" label="Role Text Editing" horizontal center layout></paper-item>
+          <paper-item id="item_role_sdk2" iconSrc="http://c.fsdn.com/allura/p/role-project/icon" label="Role Video Annotation" horizontal center layout></paper-item>
+        </core-menu>
+      </core-header-panel>
+      <div id="top_bar" horizontal layout justified tool>
+        <div id="div">{{ $.core_menu.selected }}</div>
+        <div>
+            Your Id: {{user_id}}
+        </div>
+      </div>
+      <core-pages selected="{{ $.core_menu.selectedIndex }}" selectedindex="0" notap id="core_pages">
+        <section id="section_configure" active>
+          <div class="input_highlight">
+              <h1>Insert the PeerId to which you want to connect</h1>
+              <div layout horizontal center>
+                <paper-input label="Peer Id" willvalidate id="input_uid" on-change={{connectToPeer}}></paper-input>
+                <paper-button on-click={{connectToPeer}} raised style="overflow:visible;background: #4285f4">Connect</paper-button>
+              </div>
+          </div>
+          <div class="input_highlight" hidden?={{!connected_peers.length}} >
+            <h1>Connected Peers</h1>
+            <template repeat="{{peer in connected_peers}}">
+              <paper-item icon="swap-vert">{{peer}}</paper-item>
+            </template>
+          </div>
+          <paper-toast id="toast_connected" text="You are now connected :)" onclick="discardDraft(el)"></paper-toast>
+        </section>
+        <section id="section_text_editing">
+          <yatta-texteditor value={{texteditor}}></yatta-texteditor>
+        </section>
+        <section id="section_elements">
+          <div class="input_highlight">
+            <h2>Checkboxes</h2>
+            <div>
+              <div horizontal layout center>
+                <paper-checkbox checked={{checkbox1}}></paper-checkbox>
+                <div style="margin-left:3em;"><h3>One</h3></div>
+              </div>
+              <div horizontal layout center>
+                <paper-checkbox checked={{checkbox2}}></paper-checkbox>
+                <div style="margin-left:3em;"><h3>Two</h3></div>
+              </div>              
+              <div horizontal layout center>
+                <paper-checkbox checked={{checkbox3}}></paper-checkbox>
+                <div style="margin-left:3em;"><h3>Three</h3></div>
+              </div>
+            </div>
+          </div>
+          <div class="input_highlight">
+            <h2>Slider and progress bar</h2>
+            <div>
+              <h3>Slider</h3>
+              <paper-slider min="10" max="100" value=50 immediateValue={{slider}} style="width:100%"></paper-slider>
+              <br>
+              <h3>Progress bar</h3>
+              <paper-progress value={{slider}} style="width:100%"></paper-progress>
+            </div>
+          </div>
+          <div class="input_highlight">
+            <h2>Radio Buttons</h2>
+            <paper-radio-group selected={{radio}}>
+              <paper-radio-button name="one" label="One"></paper-radio-button>
+              <paper-radio-button name="two" label="Two"></paper-radio-button>
+              <paper-radio-button name="three" label="Three"></paper-radio-button>
+            </paper-radio-group>
+          </div>
+          <div class="input_highlight">
+            <h2>Toggle Buttons</h2>
+            <div style="width:14em;">
+              <div horizontal layout center>
+                <h3 flex>TV:</h3>
+                <paper-toggle-button checked={{toggle1}}></paper-checkbox>
+              </div>
+              <div horizontal layout center>
+                <h3 flex>Internet:</h3>
+                <paper-toggle-button checked={{toggle2}}></paper-checkbox>
+              </div>  
+            </div>
+          </div>
+        </section>
+        <section id="section_role-sdk1">
+          <!--iframe frameborder="0" style="width:100%;height:100%;" src="http://role-sandbox.eu/spaces/ctext?dashboard=false"></iframe-->
+        </section>
+        <section id="section_role-sdk2">
+          <!--iframe frameborder="0" style="width:100%;height:100%;" src="http://role-sandbox.eu/spaces/golovin?dashboard=false"></iframe-->
+        </section>
+      </core-pages>
+    </core-scaffold>
+    <yatta-element id="yatta" yatta={{yatta}} user_id={{user_id}}>
+      <yatta-attribute name="toggle1" val={{toggle1}}></yatta-attribute>
+      <yatta-attribute name="toggle2" val={{toggle2}}></yatta-attribute>
+      <yatta-attribute name="checkbox1" val={{checkbox1}}></yatta-attribute>
+      <yatta-attribute name="checkbox2" val={{checkbox2}}></yatta-attribute>
+      <yatta-attribute name="checkbox3" val={{checkbox3}}></yatta-attribute>
+      <yatta-attribute name="dropdown" val={{dropdown}} defaultVal="Donut"></yatta-attribute>
+      <yatta-attribute name="radio" val={{radio}} defaultVal="one"></yatta-attribute>
+      <yatta-attribute name="slider" val={{slider}} defaultVal=50></yatta-attribute>
+      <yatta-attribute name="texteditor" val={{texteditor}} type="mutable" defaultVal="Edit me :)"></yatta-attribute>
+    </yatta-element>
+  </template>
+
+  <script>
+
+    Polymer({
+      ready: function (){
+        this.slider = 300;
+        this.user_id = ""+Math.floor(Math.random()*1000);
+        this.connected_peers = [];
+      },
+      yattaChanged: function (){
+        var that = this;
+        window.yatta = this.yatta;
+        this.yatta.connector.onNewConnection(function(conn){
+          var n = true
+          that.connected_peers.map(function(id){
+            if(id == conn.peer){
+              n = false;
+            }
+          });
+          if(n){
+            that.connected_peers.push(conn.peer);
+            console.log(conn.peer);
+          }
+        });
+      },
+      connectToPeer: function (){
+        // due to a bug in chrome, this sometimes fires twice.
+        var peer = this.$.input_uid.value;
+        if(this.$.yatta.yatta.connector.connections[peer] == null){
+          this.$.yatta.connectToPeer(peer);
+          this.$.toast_connected.show();
+          var that = this;
+          window.setTimeout(function(){
+              that.$.input_uid.value = "";
+          },0);
+          this.connected_peers.push(peer);
+        }  
+      }
+    });
+
+  </script>
+
+</polymer-element>

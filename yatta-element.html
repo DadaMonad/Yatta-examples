@@ -1,0 +1,68 @@
+
+
+<polymer-element name="yatta-element" hidden attributes="val user_id yatta connectToPeer">
+  <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+  <script src="Yatta/build/browser/Frameworks/JsonFramework.js"></script>
+  <script src="Yatta/build/browser/Connectors/PeerJsConnector.js"></script>
+
+  <script>
+    Polymer({
+      connectToPeer: function(id){
+        this.yatta.getConnector().connectToPeer(id);
+      },
+      user_idChanged: function(old,new_value){
+        if(this.connected){
+          throw new Error("You can't change the user_id when ")
+        } 
+        this.connected = true;
+        var that = this;
+        
+        var conn = {
+          host: "terrific-peerjs.herokuapp.com",
+          port: "", // this works because heroku can forward to the right port.
+          // debug: true,
+        };
+        
+        window.Y.createPeerJsConnector(that.user_id, conn, function(Connector, user_id){
+          var yatta = new window.Y.JsonFramework(user_id, Connector);
+          yatta.setMutableDefault("immutable")
+          that.val = function(){
+            return yatta.val.apply(yatta, arguments);    
+          };
+          that.yatta = yatta;
+          that.user_id = yatta.getUserId();
+          var y_shared = yatta.getSharedObject();
+          
+          var len = that.children.length
+          for(var i = 0; i < len; i++){
+            var attr = that.children.item(i);
+            attr.yatta = yatta;
+          }
+          
+          y_shared.on("change", function(event_name, property_name, op){
+            if(y_shared == this){
+              var len = that.children.length
+              for(var i = 0; i < len; i++){
+                var attr = that.children.item(i);
+                if(attr.name == property_name){
+                  var new_val = this.val(property_name);
+                  attr.val = new_val;
+                  
+                }
+              }
+            }
+            
+          });
+        });
+      }, 
+      
+      ready: function(){
+        this.connected = false;
+
+      }
+    
+    });
+
+  </script>
+
+</polymer-element>
