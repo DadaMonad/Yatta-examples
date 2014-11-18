@@ -17,11 +17,12 @@
         this.connected = true;
         var that = this;
         
-        var conn = {
+        /*var conn = {
           host: "terrific-peerjs.herokuapp.com",
           port: "", // this works because heroku can forward to the right port.
           // debug: true,
-        };
+        };*/
+        var conn = {key: 'h7nlefbgavh1tt9'};
         
         window.Y.createPeerJsConnector(that.user_id, conn, function(Connector, user_id){
           var yatta = new window.Y.JsonFramework(user_id, Connector);
